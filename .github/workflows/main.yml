@@ -35,7 +35,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: MyApp-APK
-          path: build/app/outputs/flutter-apk/
+          path: build/app/outputs/flutter-apk/*.apk
 
       - name: Move APK Artifact
         run: |
