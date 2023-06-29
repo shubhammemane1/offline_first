@@ -30,3 +30,20 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Start release build
         run: flutter build apk
+        
+      - name: Copy APK Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: MyApp-APK
+          path: build/app/outputs/flutter-apk/
+
+      - name: Move APK Artifact
+        run: |
+          mkdir copied-artifact
+          mv build/app/outputs/flutter-apk/app-release.apk copied-artifact/
+          
+      - name: Publish Copied Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Copied-APK
+          path: copied-artifact/app-release.apk
