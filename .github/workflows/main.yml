@@ -25,7 +25,7 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
-      - name: Start release build
+      - name: Start release build for Android
         run: flutter build apk
 
       - name: Copy APK Artifact
@@ -34,19 +34,25 @@ jobs:
           name: MyApp-APK
           path: build/app/outputs/flutter-apk/*.apk
 
-      - name: Download APK Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: MyApp-APK
-          path: artifacts
+      - name: Start release build for iOS
+        run: flutter build ios --release --no-codesign
 
-      - name: Move APK Artifact
+      - name: Copy IPA Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: MyApp-IPA
+          path: build/ios/iphoneos/Runner.app
+
+      - name: Archive the IPA
+        run: zip -r MyApp.ipa build/ios/iphoneos/Runner.app
+
+      - name: Move IPA Artifact
         run: |
           mkdir copied-artifact
-          mv artifacts/*.apk copied-artifact/
-          
+          mv MyApp.ipa copied-artifact/
+
       - name: Publish Copied Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: Copied-APK
-          path: copied-artifact/app-release.apk
+          name: Copied-IPA
+          path: copied-artifact/MyApp.ipa
