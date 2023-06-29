@@ -10,37 +10,40 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      # 8
       - uses: actions/checkout@v3
-      # 9
+
       - uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: "12.x"
-      # 10   
+
       - uses: subosito/flutter-action@v2
         with:
-          # 11
           flutter-version: "3.10.5"
           channel: 'stable'
-      # 12
+
       - name: Get dependencies
         run: flutter pub get
 
-      # Runs a set of commands using the runners shell
       - name: Start release build
         run: flutter build apk
-        
+
       - name: Copy APK Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/upload-artifact@v2
         with:
           name: MyApp-APK
           path: build/app/outputs/flutter-apk/*.apk
 
+      - name: Download APK Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: MyApp-APK
+          path: artifacts
+
       - name: Move APK Artifact
         run: |
           mkdir copied-artifact
-          mv build/app/outputs/flutter-apk/app-release.apk copied-artifact/
+          mv artifacts/*.apk copied-artifact/
           
       - name: Publish Copied Artifact
         uses: actions/upload-artifact@v2
